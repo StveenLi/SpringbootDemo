@@ -1,22 +1,34 @@
 package spb_demo.demo;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import spb_demo.pojo.JSONResult;
 import spb_demo.pojo.User;
+import spb_demo.service.UserService;
+
+import java.util.List;
 
 @RestController()
 public class UserController {
+    @Autowired
+    private UserService userService;
 
     @RequestMapping("/getUser")
     @ResponseBody
     public JSONResult getUser(){
-        User user = new User();
-        user.setAge(10);
-        user.setName("Stveen Li");
-        user.setDescription("这里是usercontroller");
-        return JSONResult.ok(user);
+        List<User> userList = userService.findByName("st");
+        return JSONResult.ok(userList);
+    }
+
+    @RequestMapping(value = "/update" )
+    public JSONResult update(int id, String name){
+        int res = userService.update(id, name);
+        if(res>0){
+            return JSONResult.ok();
+        }
+        return JSONResult.errorException("失败");
     }
 }
 
